@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Breakout</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      text-align: center;
+    }
+    canvas {
+      border: 1px solid black;
+      background-color: #eee;
+      display: block;
+      margin: 0 auto;
+    }
+    #scoreBoard {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="breakoutCanvas" width="480" height="320"></canvas>
+  <div id="scoreBoard">Score: 0</div>
+  <script>
+    // Canvas setup
+    var canvas = document.getElementById("breakoutCanvas");
+    var ctx = canvas.getContext("2d");
+
+    // Ball variables
+    var x = canvas.width / 2;
+    var y = canvas.height - 30;
+    var dx = 2;
+    var dy = -2;
+    var ballRadius = 10;
+    var ballColor = "#FFE000";
+
+    // Paddle variables
+    var paddleHeight = 10;
+    var paddleWidth = 75;
+    var paddleX = (canvas.width - paddleWidth) / 2;
+    var paddleColor = "#E70001";
+
+    // Input variables
+    var rightPressed = false;
+    var leftPressed = false;
+
+    // Mouse control variables
+    var mouseControl = false;
+
+    // Brick variables
+    var brickRowCount = 3;
+    var brickColumnCount = 5;
+    var brickWidth = 75;
+    var brickHeight = 20;
+    var brickPadding = 10;
+    var brickOffsetTop = 30;
+    var brickOffsetLeft = 30;
+    var brickColor = "#008542";
+    var bricks = [];
+
+    // Game state variables
+    var stageClear = false;
+    var gameStarted = false;
+    var score = 0;
+
+    function initializeBricks() {
+      bricks = [];
+      for (var c = 0; c < brickColumnCount; c++) {
+        bricks[c] = [];
+        for (var r = 0; r < brickRowCount; r++) {
+          bricks[c][r] = { x: 0, y: 0, status: 1 };
+        }
+      }
+    }
+
+    initializeBricks();
+
+    // Event listeners
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
+    document.addEventListener("mousemove", mouseMoveHandler, false);
+    document.addEventListener("mousedown", mouseDownHandler, false);
+    document.addEventListener("mouseup", mouseUpHandler, false);
+
+    // Functions
+    function keyDownHandler(e) {
+      if (e.key === "Right" || e.key === "ArrowRight") {
+        rightPressed = true;
+      } else if (e.key === "Left" || e.key === "ArrowLeft") {
+        leftPressed = true;
+      }
+    }
+
+    function keyUpHandler(e) {
+      if (e.key === "Right" || e.key === "ArrowRight") {
+        rightPressed = false;
+      } else if (e.key === "Left" || e.key === "ArrowLeft") {
+        leftPressed = false;
+      }
+    }
+
+    function mouseMoveHandler(e) {
+      var relativeX = e.clientX - canvas.offsetLeft;
+      if (relativeX > paddleWidth / 2 && relativeX < canvas.width - paddleWidth / 2) {
+        paddleX = relativeX - paddleWidth / 2;
+      }
+    }
+
+    function mouseDownHandler(e) {
+      mouseControl = true;
+    }
+
+    function mouseUpHandler(e) {
+      mouseControl = false;
+    }
+
+    function collisionDetection() {
+      var totalBricks = brickRowCount * brickColumnCount;
+      var remainingBricks = 0;
+      for (var c = 0; c < brickColumnCount; c++) {
+        for (var r = 0; r < brickRowCount; r++) {
+          var brick = bricks[c][r];
+          if (brick.status === 1) {
+            remainingBricks++;
+            if (
+              x > brick.x &&
+              x < brick.x + brickWidth &&
+              y > brick.y &&
+              y < brick.y + brickHeight
+            ) {
+              dy = -dy;
+              brick.status = 0;
+              score += 10;
+              document.getElementById('scoreBoard').innerText = "Score: " + score;
+            }
+          }
+        }
+      }
+      if (remainingBricks === 0) {
+        stageClear = true;
+        initializeBricks();
+        dx += 0.5; // Incrementa la velocidad de la pelota
+        setTimeout(function() {
+          alert("STAGE CLEAR");
+          stageClear = false;
+          gameStarted = false;
+          x = canvas.width / 2;
+          y = canvas.height - 30;
+          dx = 2;
+          dy = -2;
+          paddleX = (canvas.width - paddleWidth) / 2;
+        }, 100);
+      }
+    }
+
+    function drawBall() {
+      ctx.beginPath();
+      ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+      ctx.fillStyle = ballColor;
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    function drawPaddle() {
+      ctx.beginPath();
+      ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+      ctx.fillStyle = paddleColor;
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    function drawBricks() {
+      for (var c = 0; c < brickColumnCount; c++) {
+        for (var r = 0; r < brickRowCount; r++) {
+          if (bricks[c][r].status === 1) {
+            var brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
+            var brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
+            bricks[c][r].x = brickX;
+            bricks[c][r].y = brickY;
+            ctx.beginPath();
+            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+            ctx.fillStyle = brickColor;
+            ctx.fill();
+            ctx.closePath();
+          }
+        }
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBricks();
+      drawBall();
+      drawPaddle();
+      collisionDetection();
+
+      if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+        dx = -dx;
+      }
+      if (y + dy < ballRadius) {
+        dy = -dy;
+      } else if (y + dy > canvas.height - ballRadius) {
+        if (x > paddleX && x < paddleX + paddleWidth) {
+          dy = -dy;
+        } else {
+          alert("GAME OVER");
+          document.location.reload();
+          clearInterval(interval);
+        }
+      }
+
+      if (rightPressed && paddleX < canvas.width - paddleWidth) {
+        paddleX += 7;
+      } else if (leftPressed && paddleX > 0) {
+        paddleX -= 7;
+      }
+
+      if (!gameStarted && !stageClear) {
+        x = canvas.width / 2;
+        y = canvas.height - 30;
+        gameStarted = true;
+      }
+
+      x += dx;
+      y += dy;
+    }
+
+    var interval = setInterval(draw, 10);
+  </script>
+</body>
+</html>
