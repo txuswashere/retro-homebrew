@@ -12,4 +12,4 @@ https://retro-homebrew.blogspot.com/
 * [Breakout](https://retro-homebrew.blogspot.com/p/breakout.html)
 
 ![Blockade](https://github.com/txuswashere/retro-homebrew/raw/main/jpgs/Blockade1976.jpg)
-* [Blockade](https://retro-homebrew.blogspot.com/p/Blockade.html)
+* [Blockade](https://retro-homebrew.blogspot.com/p/blockade.html)
