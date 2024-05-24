@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>TRON Light Cycles</title>
+    <style type="text/css">
+	
+		html, body, figure, figcaption, ul, li, h1 {
+		  margin: 0;
+		  padding: 0;
+		  border: 0;
+		  font: inherit;
+		  text-align: inherit;
+		}
+
+		ul {
+		  list-style: none;
+		}
+
+		body {
+		  /*font-family: sans-serif;*/
+		  font-family: 'Orbitron', sans-serif;
+		  text-align: center;
+		  font-weight: bold;
+		  color: white;
+		  background: black;
+		}
+
+		.tron-logo {
+		  width: 400px;
+		  margin: auto;
+		  padding: 10px;
+		}
+
+		.tron-logo img {
+		  max-width: 100%;
+		}
+
+		figure {
+		  display: inline-block;
+		  /*will need to modify these if the size of the board changes*/
+		  min-width: 800px;
+		  min-height: 560px;
+		  max-width: 850px;
+		  max-height: 580px;
+		  border: 10px solid #5EC4F2;
+		}
+
+		li {
+		  float: left;
+		  width: 8px;
+		  height: 8px;
+		}
+
+		.player {
+		  background: blue;
+		}
+
+		.player2 {
+		  background: #FF4500;
+		}
+
+		h1 {
+		  color: white;
+		  font-family: 'Audiowide', cursive;
+		  /*font-family: 'Orbitron', sans-serif;*/
+		  font-size: 30px;
+		}
+
+		.intro-outro {
+		  display: flex;
+		  align-items: center;
+		  flex-direction: column;
+		  position: absolute;
+		  z-index: 2;
+		  left: 0;
+		  right: 0;
+		  top: 220px;
+		  width: 800px;
+		  margin: auto;
+		}
+
+		.end-display {
+		  padding-top: 100px;
+		}
+
+		#start, #replay, #two-player {
+		  border: 4px solid red;
+		  border-radius: 10px;
+		  padding-top: 5px;
+		  padding-bottom: 5px;
+		  padding-left: 30px;
+		  padding-right: 30px;
+		  cursor: pointer;
+		  background-color: black;
+		  margin-bottom: 8px;
+		}
+
+		#computer-win, #you-win, #player1-win, #player2-win {
+		  padding-bottom: 30px;
+		  font-size: 40px;
+		}
+
+		#instructions {
+		  padding-bottom: 34px;
+		  width: 675px;
+		  font-size: 22px;
+		  font-family: 'Audiowide', cursive;
+		}
+
+		h1#instructions {
+		  text-decoration: underline;
+		  padding-bottom: 10px;
+		  font-size: 30px;
+		}
+
+		.display {
+		  display: flex;
+		  justify-content: center;
+		}
+
+		.leftspace {
+		  position: relative;
+		  width: 200px;
+		  margin-right: 10px;
+		}
+
+		.rightspace {
+		  width: 200px;
+		  margin-left: 10px;
+		}
+
+		.medium, .hard {
+		  border: 4px solid red;
+		  border-radius: 10px;
+		  padding-top: 5px;
+		  padding-bottom: 5px;
+		  padding-left: 30px;
+		  padding-right: 30px;
+		  cursor: pointer;
+		  background-color: black;
+		  margin-bottom: 12px;
+		}
+
+		.easy {
+		  color: red;
+		  border: 4px solid red;
+		  border-radius: 10px;
+		  padding-top: 5px;
+		  padding-bottom: 5px;
+		  padding-left: 30px;
+		  padding-right: 30px;
+		  cursor: pointer;
+		  background-color: black;
+		  margin-bottom: 12px;
+		}
+
+		.left-header {
+		  text-decoration: underline;
+		  margin-bottom: 14px;
+		}
+
+		.score {
+		  font-size: 26px;
+		  margin-bottom: 60px
+		}
+
+		.blue-wins {
+		  font-size: 26px;
+		  font-family: 'Orbitron', sans-serif;
+		  color: blue;
+		  margin-right: 10px;
+		}
+
+		.red-wins {
+		  font-size: 26px;
+		  font-family: 'Orbitron', sans-serif;
+		  color: #FF4500;
+		  margin-left: 10px;
+		}	
+	
+	</style>
+    <!link href='https://fonts.googleapis.com/css?family=Orbitron|Audiowide' rel='stylesheet' type='text/css'>
+    <!link href="tron-favicon.ico" rel="icon" type="image/x-icon" />
+  </head>
+
+  <body>
+    <!audio controls>
+      <!source src="./music/derezzed.mp3" type="audio/mpeg">
+    <!/audio>
+    <div class="tron-logo">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/b/bb/TRON.png" />
+    </div>
+
+    <div class="intro-outro">
+      <h1 class="start-display" id="instructions">Instructions</h1>
+      <div class="start-display" id="instructions">
+        Don't crash! You are the <span style="color: blue;">blue</span> light cycle.
+        Avoid the walls and trails of light left by you and your opponent.
+        Navigate your light cycle by the arrow keys.
+      </div>
+      <h1 class="start-display" id="start">START</h1>
+      <div class="start-display" id="instructions" style="padding-top: 60px">
+        Have a <span style="color: #FF4500;">Frenemy</span>?
+      </div>
+      <h1 class="start-display" id="two-player">2 PLAYERS</h1>
+      <div class="start-display" id="instructions" style="font-size: 18px;">
+        (<span style="color: #FF4500">Player 2</span> uses WASD)
+      </div>
+
+      <h1 class="end-display" id="you-win">You win!</h1>
+      <h1 class="end-display" id="computer-win">Computer wins!</h1>
+      <h1 class="end-display" id="player1-win">Player 1 wins!</h1>
+      <h1 class="end-display" id="player2-win">Player 2 wins!</h1>
+      <h1 class="end-display" id="replay">PLAY AGAIN</h1>
+    </div>
+
+    <div class="display">
+      <div class="leftspace">
+        <div class="score" style="display: none;">
+          <h1 class="left-header"> Wins </h1>
+          <span class="blue-wins">0</span>  -
+          <span class="red-wins">0</span>
+        </div>
+
+        <div class="difficulty" style="display: none;">
+          <h1 class="left-header"> Difficulty </h1>
+          <h1 class="easy">Easy</h1>
+          <h1 class="medium">Medium</h1>
+          <h1 class="hard">Hard</h1>
+        </div>
+      </div>
+
+      <figure class="tron-game">
+      </figure>
+
+      <div class="rightspace"></div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script>
+	
+		var Coord = function (i, j) {
+		  this.i = i;
+		  this.j = j;
+		};
+
+		Coord.prototype.equals = function (coord2) {
+		  return (this.i === coord2.i) && (this.j === coord2.j);
+		};
+
+		Coord.prototype.plus = function (coord2) {
+		  // use to find new position of the bike on each move
+		  return new Coord(this.i + coord2.i, this.j + coord2.j);
+		};
+
+		Coord.prototype.isOpposite = function (coord2) {
+		  // use to prevent bike from turning around on itself
+		  return (this.i === (-1 * coord2.i) && this.j === (-1 * coord2.j));
+		};	
+	
+	
+	</script>
+	
+    <script>
+	
+		var Bike = function (board, startPos, dir) {
+		  this.dir = dir;
+		  this.turning = false;
+		  this.board = board;
+		  this.alive = true;
+		  this.opponent = null;
+
+		  var start = new Coord(startPos[0], startPos[1]);
+		  this.segments = [start];
+		};
+
+		Bike.DIFFS = {
+		  "N": new Coord(-1, 0),
+		  "E": new Coord(0, 1),
+		  "S": new Coord(1, 0),
+		  "W": new Coord(0, -1)
+		};
+
+		Bike.prototype.isOccupying = function (coord) {
+		  var result = false;
+		  this.segments.forEach(function (segment) {
+			if (segment.equals(coord)) {
+			  result = true;
+			}
+		  });
+		  return result;
+		};
+
+		Bike.prototype.head = function () {
+		  return this.segments[this.segments.length - 1];
+		};
+
+		Bike.prototype.isValid = function(coord) {
+		  // check boundaries on board
+		  if (!this.board.validPosition(coord)) {
+			return false;
+		  }
+		  // check if bike runs into itself
+		  for (var i = 0; i < this.segments.length - 1; i++) {
+			if (this.segments[i].equals(coord)) {
+			  return false;
+			}
+		  }
+		  // check if bike runs into opponent
+		  if (this.opponent.isOccupying(coord)) {
+			return false;
+		  }
+		  return true;
+		};
+
+		Bike.prototype.move = function () {
+		  var nextCoord = this.head().plus(Bike.DIFFS[this.dir]);
+		  this.segments.push(nextCoord);
+
+		  this.turning = false;
+		  if (!this.isValid(nextCoord) ) {
+			this.alive = false;
+		  }
+		};
+
+		Bike.prototype.turn = function (dir) {
+		  // don't allow user to turn directly around in opposite direction
+		  if (Bike.DIFFS[dir].isOpposite(Bike.DIFFS[this.dir]) || this.turning) {
+			return;
+		  } else {
+			this.turning = true;
+			this.dir = dir;
+		  }
+		};
+
+		/// Computer AI
+		Bike.prototype.computerChangeDir = function () {
+		  var turningDirs;
+		  if (this.dir === "N" || this.dir === "S") {
+			turningDirs = ["W", "E"];
+		  } else {
+			turningDirs = ["N", "S"];
+		  }
+
+		  // decide the turn to make based on the length of the open path
+		  var firstDir = turningDirs[0];
+		  var firstDirPathCount = 0; //for counting the open spaces on this path
+		  var firstDirCoord = this.head().plus(Bike.DIFFS[firstDir]);
+
+		  while (this.isValid(firstDirCoord)) {
+			firstDirPathCount += 1;
+			// go to next coord and see if it is free
+			firstDirCoord = firstDirCoord.plus(Bike.DIFFS[firstDir]);
+		  }
+
+		  var secondDir = turningDirs[1];
+		  var secondDirPathCount = 0;
+		  var secondDirCoord = this.head().plus(Bike.DIFFS[secondDir]);
+
+		  while (this.isValid(secondDirCoord)) {
+			secondDirPathCount += 1;
+			secondDirCoord = secondDirCoord.plus(Bike.DIFFS[secondDir]);
+		  }
+
+		  // go with the direction that has the clearest path
+		  if (firstDirPathCount > secondDirPathCount) {
+			this.dir = firstDir;
+		  } else {
+			this.dir = secondDir;
+		  }
+		};
+
+		Bike.prototype.computerMove = function () {
+		  var nextCoord = this.head().plus(Bike.DIFFS[this.dir]);
+
+		  // make a random turn once in awhile to avoid wall hugging
+		  if (Math.random() > this.computerTurnFrequency() ) {
+			this.computerChangeDir();
+		  }
+
+		  if (this.isValid(nextCoord)) {
+			this.segments.push(nextCoord);
+		  } else {
+			this.computerChangeDir();
+			nextCoord = this.head().plus(Bike.DIFFS[this.dir]);
+			this.segments.push(nextCoord);
+		  }
+
+		  // if still invalid the computer lost
+		  if (!this.isValid(nextCoord)) {
+			this.alive = false;
+		  }
+		};
+
+		Bike.prototype.computerTurnFrequency = function () {
+		  // Make the easy difficulty turn more frequently
+		  if (this.board.difficulty === 1) {
+			return 0.95;
+		  } else if (this.board.difficulty === 2) {
+			return 0.98;
+		  } else {
+			return 1.0; //hardest will make no turns and just hug the wall
+		  }
+		};
+
+		// so linter doesn't yell at us
+		var Coord = Coord || {};	
+	
+	</script>
+	
+	
+	
+    <script>
+	
+		var Board = function (dimX, dimY) {
+		  this.dimX = dimX;
+		  this.dimY = dimY;
+
+		  // enter start coordinates as an array - [i, j]
+		  var player1StartPos = [Math.floor(dimY/2), Math.floor(7*dimX/8)] ;
+		  this.player1 = new Bike(this, player1StartPos, "W");
+
+		  var player2StartPos = [Math.floor(dimY/2), Math.floor(dimX/8)];
+		  this.player2 = new Bike(this, player2StartPos, "E");
+
+		  this.player1.opponent = this.player2;
+		  this.player2.opponent = this.player1;
+
+		  // take the difficulty that was defined on a previous game if one exists
+		  this.difficulty = window.difficulty ? window.difficulty : 1;
+		};
+
+		Board.prototype.validPosition = function (coord) {
+		  return (coord.i >= 0 && coord.i < this.dimY) &&
+				 (coord.j >= 0 && coord.j < this.dimX);
+		};
+
+
+		// so linter doesn't yell at us
+		var Bike = Bike || {};	
+	
+	</script>
+	
+    <script>
+
+
+		var View = function($el, players) {
+		  this.$el = $el;
+		  this.players = players;
+		  this.board = new Board(100, 70);
+		  // speed depends on the difficulty setting
+		  this.speed = window.speed ? window.speed : 35;
+		  this.setupGrid();
+		};
+
+		View.prototype.startGame = function () {
+		  this.intervalId = window.setInterval(
+			this.step.bind(this),
+			this.speed
+		  );
+
+		  $(window).on("keydown", this.handleKeyEvent.bind(this));
+
+		  $(window).on("click", this.handleDifficultyChange.bind(this));
+		};
+
+		View.KEYS1 = {
+		  38: "N",
+		  39: "E",
+		  40: "S",
+		  37: "W"
+		};
+
+		View.KEYS2 = {
+		  87: "N",
+		  68: "E",
+		  83: "S",
+		  65: "W"
+		};
+
+		View.prototype.handleKeyEvent = function (event) {
+		  if (View.KEYS1[event.keyCode]) {
+			this.board.player1.turn(View.KEYS1[event.keyCode]);
+		  } else if (this.players === 2 && View.KEYS2[event.keyCode]) {
+			this.board.player2.turn(View.KEYS2[event.keyCode]);
+		  } else {
+			// ignore other keys, or maybe have pause button?
+		  }
+		};
+
+		View.prototype.handleDifficultyChange = function (event) {
+		  // define the difficulty on the window so it persists through each game
+		  var target = event.target.className;
+		  if (target === "easy") {
+			$('.easy').css('color', 'red');
+			$('.medium').css('color', 'white');
+			$('.hard').css('color', 'white');
+			window.difficulty = 1;
+			window.speed = 35;
+		  } else if (target === "medium") {
+			$('.easy').css('color', 'white');
+			$('.medium').css('color', 'red');
+			$('.hard').css('color', 'white');
+			window.difficulty = 2;
+			window.speed = 30;
+		  } else if (target === "hard") {
+			$('.easy').css('color', 'white');
+			$('.medium').css('color', 'white');
+			$('.hard').css('color', 'red');
+			window.difficulty = 3;
+			window.speed = 25;
+		  }
+		};
+
+		View.prototype.setupGrid = function () {
+		  var html = "";
+
+		  for (var i = 0; i < this.board.dimY; i++) {
+			html += "<ul>";
+			for (var j = 0; j < this.board.dimX; j++) {
+			  html += "<li></li>";
+			}
+			html += "</ul>";
+		  }
+
+		  this.$el.html(html);
+		  this.$li = this.$el.find("li");
+		};
+
+		View.prototype.step = function () {
+		  if (this.board.player1.alive && this.board.player2.alive) {
+			this.board.player1.move();
+			if (this.players === 2) {
+			  this.board.player2.move();
+			} else {
+			  this.board.player2.computerMove();
+			}
+			this.render();
+		  } else {
+			window.clearInterval(this.intervalId);
+			$('#replay').show();
+
+			if (this.players === 2) {
+			  if (this.checkWinner() === "Player 1") {
+				$('#player1-win').show();
+				window.wins.blue++;
+			  } else {
+				$('#player2-win').show();
+				window.wins.red++;
+			  }
+			} else {
+			  if (this.checkWinner() === "Player 1") {
+				$('#you-win').show();
+				window.wins.blue++;
+			  } else {
+				$('#computer-win').show();
+				window.wins.red++;
+			  }
+			}
+			this.updateScore();
+		  }
+		};
+
+		View.prototype.updateScore = function() {
+		  $('.red-wins').text(window.wins.red);
+		  $('.blue-wins').text(window.wins.blue);
+		};
+
+		View.prototype.render = function () {
+		  this.updateClasses(this.board.player1.segments, "player");
+		  this.updateClasses(this.board.player2.segments, "player2");
+		};
+
+		View.prototype.updateClasses = function (coords, className) {
+		  // find the index of each coord that will be in the jQuery array of li elements
+		  var self = this;
+		  coords.forEach(function(coord) {
+			var coordIdx = (coord.i * self.board.dimX) + coord.j;
+			self.$li.eq(coordIdx).addClass(className);
+		  });
+		};
+
+		View.prototype.checkWinner = function() {
+		  if (!this.board.player1.alive) {
+			return "Player 2";
+		  } else {
+			return "Player 1";
+		  }
+		};
+
+		// so linter doesn't yell at us
+		var Board = Board || {};
+
+	
+	</script>
+
+    <script>
+      $(".end-display").hide();
+      var rootEl = $('.tron-game');
+      var view;
+      window.wins = {blue: 0, red: 0}
+
+      $("#start").on("click", function() {
+        $(".start-display").hide();
+        $(".score, .difficulty").show();
+        var view = new View(rootEl);
+        view.startGame();
+      })
+
+      $("#two-player").on("click", function() {
+        $(".start-display").hide();
+        $(".score").show();
+
+        window.players = 2;
+        var view = new View(rootEl, window.players);
+        view.startGame();
+      })
+
+      $("#replay").on("click", function() {
+        $(".end-display").hide();
+        var view = new View(rootEl, window.players);
+        view.startGame();
+      })
+    </script>
+
+  </body>
+</html>
